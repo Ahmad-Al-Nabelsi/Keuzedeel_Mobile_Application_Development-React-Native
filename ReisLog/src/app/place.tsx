@@ -1,12 +1,42 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, ScrollView, StyleSheet, Text, View } from "react-native";
 import { usePlaces } from "../lib/store";
 
 export default function PlaceScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { places } = usePlaces();
+  const { places, removePlace } = usePlaces();
 
   const place = places.find((item) => item.id === id);
+
+  function confirmDelete(placeId: string, placeName: string) {
+  Alert.alert(
+    "Plek verwijderen?",
+    `Wil je “${placeName}” verwijderen?`,
+    [
+      {
+        text: "Annuleren",
+        style: "cancel",
+      },
+      {
+        text: "Verwijderen",
+        style: "destructive",
+        onPress: () => {
+          try {
+            removePlace(placeId);
+          } catch {
+            Alert.alert(
+              "Verwijderen mislukt",
+              "De plek kon niet worden verwijderd. Probeer opnieuw."
+            );
+            return;
+          }
+
+          router.dismissTo("/");
+        },
+      },
+    ]
+  );
+}
 
   if (!place) {
     return (
@@ -65,6 +95,12 @@ export default function PlaceScreen() {
       params: { id: place.id },
     })
   }
+/>
+
+<Button
+  title="Plek verwijderen"
+  color="#9F3E37"
+  onPress={() => confirmDelete(place.id, place.name)}
 />
 
       <Button
