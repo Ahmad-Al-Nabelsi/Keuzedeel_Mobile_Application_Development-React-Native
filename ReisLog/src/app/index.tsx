@@ -1,9 +1,11 @@
 import { router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { usePlaces } from "../lib/store";
+import { normalizeName, uniqueNames } from "../lib/model";
 
 export default function HomeScreen() {
   const { places } = usePlaces();
+  const countries = uniqueNames(places.map((place) => place.country));
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Text style={styles.title}>Mijn reizen</Text>
@@ -29,14 +31,46 @@ export default function HomeScreen() {
 
       <Text style={styles.heading}>Mijn landen</Text>
 
-      {places.length === 0 && (
-  <View style={styles.emptyState}>
+      {countries.length === 0 ? (
+  <View style={styles.card}>
     <Text style={styles.heading}>Nog geen plekken</Text>
 
     <Text style={styles.description}>
       Je opgeslagen landen verschijnen hier.
     </Text>
   </View>
+) : (
+  countries.map((country) => {
+    const count = places.filter(
+      (place) => normalizeName(place.country) === normalizeName(country)
+    ).length;
+
+    return (
+      <Pressable
+        key={normalizeName(country)}
+        accessibilityRole="button"
+        accessibilityLabel={`Open ${country}`}
+        onPress={() =>
+          router.push({
+            pathname: "/country",
+            params: { country },
+          })
+        }
+        style={({ pressed }) => [
+          styles.card,
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
+      >
+        <Text style={styles.heading}>{country}</Text>
+
+        <Text style={styles.description}>
+          Opgeslagen plekken · {count}
+        </Text>
+
+        <Text style={styles.countryLink}>Steden bekijken →</Text>
+      </Pressable>
+    );
+  })
 )}
     </ScrollView>
   );
@@ -79,10 +113,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  emptyState: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    padding: 20,
-    gap: 10,
-  },
+  card: {
+  backgroundColor: "#FFFFFF",
+  borderRadius: 18,
+  padding: 20,
+  gap: 10,
+},
+
+countryLink: {
+  fontSize: 15,
+  fontWeight: "bold",
+  color: "#126B65",
+},
+
 });
