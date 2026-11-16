@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
@@ -30,6 +30,7 @@ export default function HomeScreen() {
           Je opgeslagen landen verschijnen hier.
         </Text>
       </View>
+      <Link href="/places">Plekken openen</Link>
     </ScrollView>
   );
 }
