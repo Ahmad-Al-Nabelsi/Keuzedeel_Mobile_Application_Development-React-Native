@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { router } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import {
   Button,
   KeyboardAvoidingView,
@@ -23,15 +23,26 @@ import {
 import { usePlaces } from "../lib/store";
 
 export default function EditScreen() {
-    const { savePlace } = usePlaces();
+    const { id } = useLocalSearchParams<{ id?: string }>();
+const { places, savePlace } = usePlaces();
+
+const original = places.find((place) => place.id === id);
 const saving = useRef(false);
-  const [name, setName] = useState("");
-  const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
-  const [address, setAddress] = useState("");
-const [kind, setKind] = useState<PlaceType>("Bezienswaardigheid");
-const [status, setStatus] = useState<VisitStatus>("planned");
-const [note, setNote] = useState("");
+
+const [name, setName] = useState(original?.name ?? "");
+const [country, setCountry] = useState(original?.country ?? "");
+const [city, setCity] = useState(original?.city ?? "");
+const [address, setAddress] = useState(original?.address ?? "");
+
+const [kind, setKind] = useState<PlaceType>(
+  original?.kind ?? "Bezienswaardigheid"
+);
+
+const [status, setStatus] = useState<VisitStatus>(
+  original?.status ?? "planned"
+);
+
+const [note, setNote] = useState(original?.note ?? "");
 
 function handleSave() {
   if (saving.current) return;
@@ -49,16 +60,17 @@ function handleSave() {
   const now = Date.now();
 
   const place: Place = {
-    id: `${now}-${Math.random().toString(36).slice(2)}`,
-    name: name.trim(),
-    country: country.trim(),
-    city: city.trim(),
-    address: address.trim(),
-    kind,
-    status,
-    note: note.trim(),
-    createdAt: now,
-  };
+  ...original,
+  id: original?.id ?? `${now}-${Math.random().toString(36).slice(2)}`,
+  name: name.trim(),
+  country: country.trim(),
+  city: city.trim(),
+  address: address.trim(),
+  kind,
+  status,
+  note: note.trim(),
+  createdAt: original?.createdAt ?? now,
+};
 
   try {
     savePlace(place);
@@ -75,12 +87,33 @@ function handleSave() {
   router.dismissTo("/");
 }
 
+if (id && !original) {
+  return (
+    <View style={[styles.screen, styles.content]}>
+      <Text style={styles.title}>Plek niet gevonden</Text>
+
+      <Button
+        title="Naar overzicht"
+        color="#126B65"
+        onPress={() => router.dismissTo("/")}
+      />
+    </View>
+  );
+}
+
   return (
     <KeyboardAvoidingView
       style={styles.screen}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={90}
     >
+
+        <Stack.Screen
+  options={{
+    title: original ? "Plek bewerken" : "Nieuwe plek",
+  }}
+/>
+
       <ScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
