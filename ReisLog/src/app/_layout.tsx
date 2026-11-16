@@ -18,6 +18,7 @@ export default function RootLayout() {
         <Stack.Screen name="edit" options={{ title: "Nieuwe plek" }} />
         <Stack.Screen name="country" options={{ title: "Steden" }} />
         <Stack.Screen name="places" options={{ title: "Plekken" }} />
+        <Stack.Screen name="place" options={{ title: "Reisplek" }} />
       </Stack>
     </>
   );
