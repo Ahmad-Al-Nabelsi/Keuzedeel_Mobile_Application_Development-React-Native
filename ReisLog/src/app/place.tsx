@@ -57,6 +57,17 @@ export default function PlaceScreen() {
       </View>
 
       <Button
+  title="Plek bewerken"
+  color="#126B65"
+  onPress={() =>
+    router.push({
+      pathname: "/edit",
+      params: { id: place.id },
+    })
+  }
+/>
+
+      <Button
         title="Terug naar overzicht"
         color="#126B65"
         onPress={() => router.back()}
