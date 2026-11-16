@@ -1,16 +1,58 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
+import { usePlaces } from "../lib/store";
 
 export default function PlaceScreen() {
-  return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Reisplek</Text>
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { places } = usePlaces();
 
-      <View style={styles.emptyState}>
-        <Text style={styles.heading}>Geen plek geselecteerd</Text>
+  const place = places.find((item) => item.id === id);
+
+  if (!place) {
+    return (
+      <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+        <Text style={styles.title}>Plek niet gevonden</Text>
 
         <Text style={styles.description}>
-          Open een plek vanuit het overzicht om de gegevens te bekijken.
+          Deze plek is niet beschikbaar.
+        </Text>
+
+        <Button
+          title="Naar overzicht"
+          color="#126B65"
+          onPress={() => router.dismissTo("/")}
+        />
+      </ScrollView>
+    );
+  }
+
+  return (
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+      <Text style={styles.title}>{place.name}</Text>
+
+      <Text style={styles.description}>
+        {place.city} · {place.country}
+      </Text>
+
+      <View style={styles.card}>
+        <Text style={styles.label}>Soort plek</Text>
+        <Text style={styles.description}>{place.kind}</Text>
+
+        <Text style={styles.label}>Bezoekstatus</Text>
+        <Text style={styles.description}>
+          {place.status === "visited" ? "Bezocht" : "Op de planning"}
+        </Text>
+
+        <Text style={styles.label}>Adres</Text>
+        <Text style={styles.description}>
+          {place.address || "Geen adres toegevoegd."}
+        </Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.label}>Notities</Text>
+        <Text style={styles.description}>
+          {place.note || "Geen notities toegevoegd."}
         </Text>
       </View>
 
@@ -37,8 +79,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#183B4E",
   },
-  heading: {
-    fontSize: 20,
+  label: {
+    fontSize: 16,
     fontWeight: "bold",
     color: "#183B4E",
   },
@@ -47,7 +89,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#485F69",
   },
-  emptyState: {
+  card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 20,
