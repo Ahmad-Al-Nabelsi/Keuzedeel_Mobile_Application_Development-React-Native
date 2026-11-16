@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { router } from "expo-router";
 import {
   Button,
@@ -10,15 +10,21 @@ import {
   Text,
   TextInput,
   View,
+  Alert,
 } from "react-native";
 import {
   placeTypes,
   visitOptions,
+  type Place,
   type PlaceType,
   type VisitStatus,
 } from "../lib/model";
 
+import { usePlaces } from "../lib/store";
+
 export default function EditScreen() {
+    const { savePlace } = usePlaces();
+const saving = useRef(false);
   const [name, setName] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
@@ -26,6 +32,48 @@ export default function EditScreen() {
 const [kind, setKind] = useState<PlaceType>("Bezienswaardigheid");
 const [status, setStatus] = useState<VisitStatus>("planned");
 const [note, setNote] = useState("");
+
+function handleSave() {
+  if (saving.current) return;
+
+  if (!name.trim() || !country.trim() || !city.trim()) {
+    Alert.alert(
+      "Gegevens ontbreken",
+      "Vul de naam, het land en de stad in."
+    );
+    return;
+  }
+
+  saving.current = true;
+
+  const now = Date.now();
+
+  const place: Place = {
+    id: `${now}-${Math.random().toString(36).slice(2)}`,
+    name: name.trim(),
+    country: country.trim(),
+    city: city.trim(),
+    address: address.trim(),
+    kind,
+    status,
+    note: note.trim(),
+    createdAt: now,
+  };
+
+  try {
+    savePlace(place);
+  } catch {
+    saving.current = false;
+
+    Alert.alert(
+      "Opslaan mislukt",
+      "Je invoer blijft staan. Probeer opnieuw."
+    );
+    return;
+  }
+
+  router.dismissTo("/");
+}
 
   return (
     <KeyboardAvoidingView
@@ -143,6 +191,12 @@ const [note, setNote] = useState("");
   accessibilityLabel="Notities"
   multiline
   maxLength={2000}
+/>
+
+<Button
+  title="Plek opslaan"
+  color="#126B65"
+  onPress={handleSave}
 />
 
         <Button

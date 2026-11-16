@@ -1,7 +1,9 @@
 import { router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { usePlaces } from "../lib/store";
 
 export default function HomeScreen() {
+  const { places } = usePlaces();
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Text style={styles.title}>Mijn reizen</Text>
@@ -9,6 +11,10 @@ export default function HomeScreen() {
       <Text style={styles.description}>
         Bewaar de plekken die je wilt bezoeken.
       </Text>
+
+      <Text style={styles.description}>
+  Opgeslagen plekken · {places.length}
+</Text>
 
       <Pressable
         accessibilityRole="button"
@@ -23,13 +29,15 @@ export default function HomeScreen() {
 
       <Text style={styles.heading}>Mijn landen</Text>
 
-      <View style={styles.emptyState}>
-        <Text style={styles.heading}>Nog geen plekken</Text>
+      {places.length === 0 && (
+  <View style={styles.emptyState}>
+    <Text style={styles.heading}>Nog geen plekken</Text>
 
-        <Text style={styles.description}>
-          Je opgeslagen landen verschijnen hier.
-        </Text>
-      </View>
+    <Text style={styles.description}>
+      Je opgeslagen landen verschijnen hier.
+    </Text>
+  </View>
+)}
     </ScrollView>
   );
 }
