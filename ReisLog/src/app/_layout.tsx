@@ -1,9 +1,10 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { PlacesProvider } from "../lib/store";
 
 export default function RootLayout() {
   return (
-    <>
+    <PlacesProvider>
       <StatusBar style="dark" />
 
       <Stack
@@ -20,6 +21,6 @@ export default function RootLayout() {
         <Stack.Screen name="places" options={{ title: "Plekken" }} />
         <Stack.Screen name="place" options={{ title: "Reisplek" }} />
       </Stack>
-    </>
+    </PlacesProvider>
   );
 }
