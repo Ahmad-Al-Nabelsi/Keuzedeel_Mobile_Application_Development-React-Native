@@ -11,29 +11,20 @@ import {
   TextInput,
   View,
 } from "react-native";
-
-const placeTypes = [
-  "Restaurant",
-  "Café",
-  "Bezienswaardigheid",
-  "Natuur",
-  "Verblijf",
-  "Winkel",
-  "Overig",
-];
-
-const visitOptions = [
-  { value: "planned", label: "Op de planning" },
-  { value: "visited", label: "Bezocht" },
-];
+import {
+  placeTypes,
+  visitOptions,
+  type PlaceType,
+  type VisitStatus,
+} from "../lib/model";
 
 export default function EditScreen() {
   const [name, setName] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
-const [kind, setKind] = useState("Bezienswaardigheid");
-const [status, setStatus] = useState("planned");
+const [kind, setKind] = useState<PlaceType>("Bezienswaardigheid");
+const [status, setStatus] = useState<VisitStatus>("planned");
 const [note, setNote] = useState("");
 
   return (
