@@ -1,11 +1,12 @@
 # Sprint 1
 
+## Project: ReisLog
+
 ## Studentgegevens
 
 - Studentnaam: Ahmad Al Nabelsi
 - Studentnummer: 97115953
 - Opleiding: Software Developer - MBO 4
-- Project: ReisLog
 
 ## Periode
 
