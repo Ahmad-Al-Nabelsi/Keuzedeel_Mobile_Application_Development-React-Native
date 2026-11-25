@@ -11,7 +11,7 @@
 ## Periode
 
 - Begindatum: 25-11-2026
-- Einddatum: 03-12-2027
+- Einddatum: 03-12-2026
 
 ## Sprintdoel
 
